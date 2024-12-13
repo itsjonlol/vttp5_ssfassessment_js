@@ -1,9 +1,17 @@
 package vttp.batch5.ssf.noticeboard.repositories;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
+
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+import vttp.batch5.ssf.noticeboard.constant.ConstantVar;
 
 @Repository
 public class NoticeRepository {
@@ -24,8 +32,21 @@ public class NoticeRepository {
 	 *
 	 *
 	 */
-	public void insertNotices() {
+	public String insertNotices(String noticeResponse) {
+		
+		InputStream is = new ByteArrayInputStream(noticeResponse.getBytes());
+        JsonReader reader = Json.createReader(is);
+        JsonObject noticeResponseJson = reader.readObject();
+		JsonObject responseJsonObject = Json.createObjectBuilder()
+											.add("id",noticeResponseJson.getString("id"))
+											.add("timestamp",noticeResponseJson.getJsonNumber("timestamp").longValue())
+											.build();
 
+											template.opsForHash().put(ConstantVar.redisKey,noticeResponseJson.getString("id"), responseJsonObject.toString());
+		//return id
+		return noticeResponseJson.getString("id");
+		//to delete
+		//hdel noticesresponses <id>
 	}
 
 
