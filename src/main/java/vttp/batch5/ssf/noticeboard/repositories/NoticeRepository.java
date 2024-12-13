@@ -38,7 +38,9 @@ public class NoticeRepository {
 	 * 3) to delete everything at once
 	 * -> flushall
 	 * 4) insert a key
-	 * ->hset noticesresponses <data>
+	 * ->hset noticesresponses <id> <data>
+	 * 5) get all 
+	 * ->hgetall noticesresponses
 	 */
 	public String insertNotices(String noticeResponse) {
 		
