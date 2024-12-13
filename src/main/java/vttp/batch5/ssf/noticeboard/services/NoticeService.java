@@ -2,6 +2,8 @@ package vttp.batch5.ssf.noticeboard.services;
 
 
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,6 +22,7 @@ import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
 import vttp.batch5.ssf.noticeboard.models.Notice;
 import vttp.batch5.ssf.noticeboard.repositories.NoticeRepository;
 
@@ -79,12 +82,18 @@ public class NoticeService {
 		} catch (HttpClientErrorException ex) {
 			System.out.println(ex.getStatusCode());
 			System.out.println(ex.getResponseBodyAsString());
+			InputStream is = new ByteArrayInputStream(ex.getResponseBodyAsString().getBytes());
+			JsonReader reader = Json.createReader(is);
+			JsonObject errorJson = reader.readObject();
+			//get the error message
+			String errorMessage = errorJson.getString("message");
 			
-			return ResponseEntity.status(ex.getStatusCode()).header("Content-Type", "application/json").body(ex.getResponseBodyAsString());
+			return ResponseEntity.status(ex.getStatusCode()).header("Content-Type", "application/json").body(errorMessage);
 	} 
 
 
 }
+//only for successful responses
 	public String saveSuccessfulNoticeResponse(Notice notice) throws Exception {
 		String noticeResponse = this.postToNoticeServer(notice).getBody();
 		String id = noticeRepo.insertNotices(noticeResponse);

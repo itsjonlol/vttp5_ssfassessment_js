@@ -64,15 +64,11 @@ public class NoticeController {
 
         try {
             noticeService.checkHealth();
-            JsonObject successJson = Json.createObjectBuilder()
-                                       .add("status","healthy")
-                                       .build();
+            JsonObject successJson = Json.createObjectBuilder().build();
             return ResponseEntity.status(200).header("Content-Type", "application/json").body(successJson.toString());
 
         } catch (Exception ex) {
-            JsonObject errorJson = Json.createObjectBuilder()
-                                       .add("status","not healthy")
-                                       .build();
+            JsonObject errorJson = Json.createObjectBuilder().build();
             return ResponseEntity.status(503).header("Content-Type", "application/json").body(errorJson.toString());
 
 
