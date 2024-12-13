@@ -88,4 +88,8 @@ public class NoticeService {
 		notice.setId(id);
 		return id;
 	}
+
+    // public Boolean checkHealth() {
+    //     return noticeRepo.checkHealth();
+    // }
 }

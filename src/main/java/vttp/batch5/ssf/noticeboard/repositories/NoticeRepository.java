@@ -29,8 +29,12 @@ public class NoticeRepository {
 	 * For example if this method deletes a field from a hash, then write the following
 	 * redis-cli command 
 	 * 	hdel myhashmap a_key
-	 *
-	 *
+	 * 
+	 * ACTUAL COMMANDS WILL PROCEED AFTER "->" symbol
+	 *	1)to delete
+		-> hdel noticesresponses <id>
+	 * 2) to get randomkey
+	 *  -> RANDOMKEY
 	 */
 	public String insertNotices(String noticeResponse) {
 		
@@ -45,9 +49,19 @@ public class NoticeRepository {
 											template.opsForHash().put(ConstantVar.redisKey,noticeResponseJson.getString("id"), responseJsonObject.toString());
 		//return id
 		return noticeResponseJson.getString("id");
-		//to delete
-		//hdel noticesresponses <id>
+
+		
 	}
+
+	// public void checkHealth() throws Exception {
+	// 	try {
+	// 		template.randomKey();
+	// 	} catch (Exception e) {
+	// 	}
+		
+		
+
+	// }
 
 
 }
