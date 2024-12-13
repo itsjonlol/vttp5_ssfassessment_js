@@ -48,7 +48,7 @@ public class NoticeRepository {
 											.add("timestamp",noticeResponseJson.getJsonNumber("timestamp").longValue())
 											.build();
 
-											template.opsForHash().put(ConstantVar.redisKey,noticeResponseJson.getString("id"), responseJsonObject.toString());
+		template.opsForHash().put(ConstantVar.redisKey,noticeResponseJson.getString("id"), responseJsonObject.toString());
 		//return id
 		return noticeResponseJson.getString("id");
 
