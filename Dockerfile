@@ -31,7 +31,6 @@ EXPOSE ${SERVER_PORT}
 ENTRYPOINT SERVER_PORT=${SERVER_PORT} java -jar target/noticeboard-0.0.1-SNAPSHOT.jar
 
 #docker build -t itsjonlol/noticeboard:0.0.1 . 
-#docker run -d -t -p 4000:4000 itsjonlol/mock1:0.0.1 
 
 #Stage 2
 FROM maven:3.9.9-eclipse-temurin-23
@@ -48,7 +47,7 @@ ENV SERVER_PORT=4000
 
 # Expose the port
 EXPOSE ${SERVER_PORT}
-
+#HEALTHCHECK
 HEALTHCHECK --interval=60s --start-period=120s --retries=5 CMD curl -s -f http://localhost:${SERVER_PORT}/status || exit 1
 #change the name here
 # Run the application
