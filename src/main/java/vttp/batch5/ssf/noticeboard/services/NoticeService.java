@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,7 +20,6 @@ import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
-import vttp.batch5.ssf.noticeboard.constant.Url;
 import vttp.batch5.ssf.noticeboard.models.Notice;
 import vttp.batch5.ssf.noticeboard.repositories.NoticeRepository;
 
@@ -28,6 +28,9 @@ public class NoticeService {
 
 	@Autowired
 	NoticeRepository noticeRepo;
+
+	@Value("${post.url}")
+	String url;
 
 	// TODO: Task 3	
 	// You can change the signature of this method by adding any number of parameters
@@ -47,7 +50,7 @@ public class NoticeService {
 									.add("poster",notice.getPoster())
 									.add("postDate",notice.getPostDate().getTime())
 									.add("categories",categoryArray)
-									
+									.add("text",notice.getText())
 									.build();
 		
 		String noticeJsonString = noticeJson.toString();
@@ -55,7 +58,7 @@ public class NoticeService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
-		 RequestEntity<String> requestEntity = RequestEntity.post(Url.URL)
+		 RequestEntity<String> requestEntity = RequestEntity.post(url)
                                                            .headers(headers)
                                                            .body(noticeJsonString);
 
@@ -89,7 +92,7 @@ public class NoticeService {
 		return id;
 	}
 
-    // public Boolean checkHealth() {
-    //     return noticeRepo.checkHealth();
-    // }
+    public void checkHealth() throws Exception {
+        noticeRepo.checkHealth();
+    }
 }

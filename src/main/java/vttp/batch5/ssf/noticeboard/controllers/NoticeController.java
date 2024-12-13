@@ -1,7 +1,6 @@
 package vttp.batch5.ssf.noticeboard.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,9 +8,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 import jakarta.validation.Valid;
 import vttp.batch5.ssf.noticeboard.models.Notice;
 import vttp.batch5.ssf.noticeboard.services.NoticeService;
@@ -41,51 +41,46 @@ public class NoticeController {
             return "notice";
         }
 
-        // try {
-        //     noticeService.postToNoticeServer(notice);
-        //     String responseString = noticeService.saveNoticeResponse(notice);
-        //     model.addAttribute("postingid",responseString);
-        // } catch (Exception ex) {
-        //     // String errorResponse = "I/O error on POST request for http://localhost:4000/notice: Connection refused";
-        //     model.addAttribute("errorMessage", ex.getStackTrace());
-        //     return "view3";
-        // }
-        
         ResponseEntity<String> noticeResponse = noticeService.postToNoticeServer(notice);
 
         //if successful
         if (noticeResponse.getStatusCode().value() == 201 || noticeResponse.getStatusCode().value() == 200) {
-
+            //only save the successful notice response
             String postingId = noticeService.saveSuccessfulNoticeResponse(notice);
 
             model.addAttribute("postingid",postingId);
             return "view2";
-        } else { // if error
+        } else { // if error, display the whole error message
             String errorResponse = noticeResponse.getBody();
             model.addAttribute("errorMessage",errorResponse);
             return "view3";
         }
 
-
     }
     
     @GetMapping("/status")
-    
-    public ModelAndView getHealth() {
-        ModelAndView mav = new ModelAndView(new MappingJackson2JsonView());
+    @ResponseBody
+    public ResponseEntity<String> getHealth()  {
 
         try {
-            // noticeService.checkHealth();
-            mav.setStatus(HttpStatusCode.valueOf(200));
-            mav.setViewName("healthy");
-            mav.addObject("Status","Healthy");
-            
+            noticeService.checkHealth();
+            JsonObject successJson = Json.createObjectBuilder()
+                                       .add("status","healthy")
+                                       .build();
+            return ResponseEntity.status(200).header("Content-Type", "application/json").body(successJson.toString());
+
         } catch (Exception ex) {
-            mav.setStatus(HttpStatusCode.valueOf(503));
-            mav.setViewName("unhealthy");
+            JsonObject errorJson = Json.createObjectBuilder()
+                                       .add("status","not healthy")
+                                       .build();
+            return ResponseEntity.status(503).header("Content-Type", "application/json").body(errorJson.toString());
+
 
         }
-        return mav;
+        
+
+      
+        
     }
     
     

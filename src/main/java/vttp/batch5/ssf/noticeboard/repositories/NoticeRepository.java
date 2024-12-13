@@ -31,10 +31,12 @@ public class NoticeRepository {
 	 * 	hdel myhashmap a_key
 	 * 
 	 * ACTUAL COMMANDS WILL PROCEED AFTER "->" symbol
-	 *	1)to delete
+	 *	1)to delete an id in the rediskey
 		-> hdel noticesresponses <id>
 	 * 2) to get randomkey
 	 *  -> RANDOMKEY
+	 * 3) to delete everything at once
+	 * -> flushall
 	 */
 	public String insertNotices(String noticeResponse) {
 		
@@ -52,16 +54,16 @@ public class NoticeRepository {
 
 		
 	}
-
-	// public void checkHealth() throws Exception {
-	// 	try {
-	// 		template.randomKey();
-	// 	} catch (Exception e) {
-	// 	}
+	//refer to the redis-cli in the comment above
+	public void checkHealth() throws Exception {
+		template.randomKey();
+		if (template.randomKey()==null) {
+			throw new Exception();
+		}
 		
 		
 
-	// }
+	}
 
 
 }
